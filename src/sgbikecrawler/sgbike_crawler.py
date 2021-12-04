@@ -7,7 +7,7 @@ from sgbikemart import SGBikeMart
 @click.option("-model", "--model", help="The bike model you are interested in")
 def main(model):
     crawler = SGBikeMart()
-    bikes_list = crawler.retrieve_all_listings(bike_model="Yamaha")
+    bikes_list = crawler.retrieve_all_listings(bike_model="Yamaha FZ")
     print(json.dumps(bikes_list, indent=4))
 
 

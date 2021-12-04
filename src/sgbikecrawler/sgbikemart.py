@@ -1,4 +1,5 @@
 import regex as re
+import urllib.parse
 
 from bs4 import BeautifulSoup
 import requests
@@ -40,47 +41,66 @@ class SGBikeMart:
             parent = price.parent
             price_value_group = re.search(r"SGD\$\K\S+", parent.text)
             price_value = price_value_group.group(0).strip()
-            print(price_value)
         return price_value
+
+    @staticmethod
+    def retrieve_total_pages(soup):
+        total_pages = -1
+        pattern = re.compile("last")
+        last_page_qs = soup.find("a", text=pattern, attrs={"class": "page-link"})[
+            "href"
+        ]
+        last_page_qs = (
+            last_page_qs[1:] if last_page_qs.startswith("?") else last_page_qs
+        )
+        total_pages = dict(urllib.parse.parse_qsl(last_page_qs))
+        total_pages = total_pages["page"]
+        return int(total_pages)
 
     def retrieve_all_listings(self, bike_model):
         results = []
 
         page_url = f"{SGBikeMart.URL}?bike_model={bike_model}"
-        bike_page = SGBikeMart.retrieve_page(page_url)
-        all_bikes = bike_page.select("div.row > div.col-lg-9 > div.card")
+        init_page = SGBikeMart.retrieve_page(page_url)
+        total_pages = SGBikeMart.retrieve_total_pages(init_page)
 
-        for bike in all_bikes:
-            ad_url = ""
-            ad_title = ""
-            header = bike.find("div", {"class": ["card-header"]})
+        for page_number in range(1, total_pages):
+            page_url = f"{SGBikeMart.URL}?page={page_number}&bike_model={bike_model}"
+            retrieved_page = SGBikeMart.retrieve_page(page_url)
+            print(f"crawling page {page_number}, url: {page_url}")
+            all_bikes = retrieved_page.select("div.row > div.col-lg-9 > div.card")
 
-            if header is None:
-                continue
+            for bike in all_bikes:
+                ad_url = ""
+                ad_title = ""
+                header = bike.find("div", {"class": ["card-header"]})
 
-            link = header.find("a", href=True)
-            if link is not None:
-                ad_url = f"{SGBikeMart.BASE}{link['href']}"
-                ad_title = link.get_text().strip()
-            body = bike.find(name="div", class_="card-body")
-            if body is not None:
-                reg_date = SGBikeMart.retrieve_body_section(body, "Reg Date")
-                capacity = SGBikeMart.retrieve_body_section(body, "Capacity")
-                bike_type = SGBikeMart.retrieve_body_section(body, "Vehicle Type")
-                mileage = SGBikeMart.retrieve_body_section(body, "Mileage")
-                price = SGBikeMart.retrieve_price(body)
+                if header is None:
+                    continue
 
-                bike_ad = {
-                    "title": ad_title,
-                    "url": ad_url,
-                    "reg_date": reg_date,
-                    "capacity": capacity,
-                    "bike_type": bike_type,
-                    "mileage": mileage,
-                    "price": price,
-                }
-                results.append(bike_ad)
+                link = header.find("a", href=True)
+                if link is not None:
+                    ad_url = f"{SGBikeMart.BASE}{link['href']}"
+                    ad_title = link.get_text().strip()
+                body = bike.find(name="div", class_="card-body")
+                if body is not None:
+                    reg_date = SGBikeMart.retrieve_body_section(body, "Reg Date")
+                    capacity = SGBikeMart.retrieve_body_section(body, "Capacity")
+                    bike_type = SGBikeMart.retrieve_body_section(body, "Vehicle Type")
+                    mileage = SGBikeMart.retrieve_body_section(body, "Mileage")
+                    price = SGBikeMart.retrieve_price(body)
 
-        print(f"Number of items: {len(all_bikes)}")
-        print(f"URL: {page_url}")
+                    bike_ad = {
+                        "title": ad_title,
+                        "url": ad_url,
+                        "reg_date": reg_date,
+                        "capacity": capacity,
+                        "bike_type": bike_type,
+                        "mileage": mileage,
+                        "price": price,
+                    }
+                    results.append(bike_ad)
+
+        print(f"Number of items: {len(results)}")
+
         return results
