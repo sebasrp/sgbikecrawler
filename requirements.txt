@@ -3,4 +3,5 @@ pytest
 requests
 black
 isort
+beautifulsoup4
 -e .
