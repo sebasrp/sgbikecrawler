@@ -52,6 +52,16 @@ class SGBikeMart:
         return False
 
     @staticmethod
+    def retrieve_posted_date(soup):
+        date = ""
+        small_list = soup.find_all("small")
+        for item in small_list:
+            date_group = re.search(r"Posted on :\n\K\S+", item.text)
+            if date_group is not None:
+                date = date_group.group(0).strip()
+        return date
+
+    @staticmethod
     def retrieve_total_pages(soup):
         total_pages = -1
         pattern = re.compile("last")
@@ -103,11 +113,13 @@ class SGBikeMart:
                     mileage = SGBikeMart.retrieve_body_section(body, "Mileage")
                     price = SGBikeMart.retrieve_price(body)
 
+                    date_posted = SGBikeMart.retrieve_posted_date(body)
                     is_paid = SGBikeMart.has_button_text(body, "Paid Ad")
                     is_dealer = SGBikeMart.has_button_text(body, "Dealer Ad")
                     is_direct_seller = SGBikeMart.has_button_text(body, "Direct Seller")
 
                     bike_ad = {
+                        "posted_date": date_posted,
                         "title": ad_title,
                         "url": ad_url,
                         "reg_date": reg_date,
