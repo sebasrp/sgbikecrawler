@@ -1,0 +1,6 @@
+Click
+pytest
+requests
+black
+isort
+-e .
