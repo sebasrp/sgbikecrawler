@@ -44,6 +44,14 @@ class SGBikeMart:
         return price_value
 
     @staticmethod
+    def has_button_text(soup, text):
+        buttons_list = soup.find_all("button")
+        for button in buttons_list:
+            if text in button.text:
+                return True
+        return False
+
+    @staticmethod
     def retrieve_total_pages(soup):
         total_pages = -1
         pattern = re.compile("last")
@@ -72,6 +80,7 @@ class SGBikeMart:
             page_url = f"{SGBikeMart.URL}?{urllib.parse.urlencode(url_vars)}"
             retrieved_page = SGBikeMart.retrieve_page(page_url)
             print(f"crawling page {page_number}, url: {page_url}")
+
             all_bikes = retrieved_page.select("div.row > div.col-lg-9 > div.card")
 
             for bike in all_bikes:
@@ -94,6 +103,10 @@ class SGBikeMart:
                     mileage = SGBikeMart.retrieve_body_section(body, "Mileage")
                     price = SGBikeMart.retrieve_price(body)
 
+                    is_paid = SGBikeMart.has_button_text(body, "Paid Ad")
+                    is_dealer = SGBikeMart.has_button_text(body, "Dealer Ad")
+                    is_direct_seller = SGBikeMart.has_button_text(body, "Direct Seller")
+
                     bike_ad = {
                         "title": ad_title,
                         "url": ad_url,
@@ -102,6 +115,9 @@ class SGBikeMart:
                         "bike_type": bike_type,
                         "mileage": mileage,
                         "price": price,
+                        "is_paid": is_paid,
+                        "is_dealer": is_dealer,
+                        "is_direct_seller": is_direct_seller,
                     }
                     results.append(bike_ad)
 
