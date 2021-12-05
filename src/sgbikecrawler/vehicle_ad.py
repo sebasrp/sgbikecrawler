@@ -6,7 +6,8 @@ class VehicleAd(object):
         url,
         price,
         posted_date="",
-        reg_date="",
+        coe_expiry_year="",
+        coe_expiry_details="",
         capacity="",
         vehicle_type="",
         mileage="",
@@ -18,7 +19,8 @@ class VehicleAd(object):
         self.source = source
         self.title = title
         self.url = url
-        self.reg_date = reg_date
+        self.coe_expiry_year = coe_expiry_year
+        self.coe_expiry_details = coe_expiry_details
         self.price = price
         self.posted_date = posted_date
         self.capacity = capacity
@@ -33,7 +35,8 @@ class VehicleAd(object):
             "source": self.source,
             "title": self.title,
             "url": self.url,
-            "reg_date": self.reg_date,
+            "coe_expiry_year": self.coe_expiry_year,
+            "coe_expiry_details": self.coe_expiry_details,
             "price": self.price,
             "posted_date": self.posted_date,
             "capacity": self.capacity,

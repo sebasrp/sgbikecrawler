@@ -1,4 +1,5 @@
 import regex as re
+import datetime
 import urllib.parse
 
 from bs4 import BeautifulSoup
@@ -111,6 +112,12 @@ class SGBikeMart:
                 body = bike.find(name="div", class_="card-body")
                 if body is not None:
                     reg_date = SGBikeMart.retrieve_body_section(body, "Reg Date")
+                    reg_date_datetime = datetime.datetime.strptime(reg_date, "%d/%m/%Y")
+                    coe_datetime = reg_date_datetime.replace(
+                        year=reg_date_datetime.year + 10
+                    )
+                    coe_expiry_year = coe_datetime.year
+                    coe_expiry_details = coe_datetime.strftime("%Y/%m/%d")
                     capacity = SGBikeMart.retrieve_body_section(body, "Capacity")
                     bike_type = SGBikeMart.retrieve_body_section(body, "Vehicle Type")
                     mileage = SGBikeMart.retrieve_body_section(body, "Mileage")
@@ -127,7 +134,8 @@ class SGBikeMart:
                         url=ad_url,
                         posted_date=date_posted,
                         price=price,
-                        reg_date=reg_date,
+                        coe_expiry_year=coe_expiry_year,
+                        coe_expiry_details=coe_expiry_details,
                         capacity=capacity,
                         vehicle_type=bike_type,
                         mileage=mileage,
