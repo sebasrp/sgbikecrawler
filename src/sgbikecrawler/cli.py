@@ -2,7 +2,7 @@ import json
 import csv
 
 import click
-from sgbikemart import SGBikeMart
+from sgbikecrawler import SGBikeCrawler
 
 
 @click.command()
@@ -10,8 +10,7 @@ from sgbikemart import SGBikeMart
 @click.option("--terminal", is_flag=True, help="Outputs results to terminal")
 @click.option("-m", "--model", help="The bike model you are interested in")
 def main(model, terminal, csv):
-    crawler = SGBikeMart()
-    bikes_list = crawler.retrieve_all_listings(bike_model="Yamaha FZ")
+    bikes_list = SGBikeCrawler.retrieve_all_listings(bike_model="KTM 200")
 
     if csv:
         generate_csv(bikes_list)
@@ -21,7 +20,7 @@ def main(model, terminal, csv):
 
 
 def generate_csv(bikes_list):
-    keys = bikes_list[0].keys()  # assumes all items are same dicts
+    keys = bikes_list[0].keys()
     with open("bike_ads.csv", "w", newline="") as output_file:
         dict_writer = csv.DictWriter(output_file, keys)
         dict_writer.writeheader()

@@ -4,6 +4,8 @@ import urllib.parse
 from bs4 import BeautifulSoup
 import requests
 
+from vehicle_ad import VehicleAd
+
 
 class SGBikeMart:
     BASE = "https://www.sgbikemart.com.sg/"
@@ -75,7 +77,8 @@ class SGBikeMart:
         total_pages = total_pages["page"]
         return int(total_pages)
 
-    def retrieve_all_listings(self, bike_model):
+    @staticmethod
+    def retrieve_all_listings(bike_model):
         results = []
 
         page_url = (
@@ -118,19 +121,20 @@ class SGBikeMart:
                     is_dealer = SGBikeMart.has_button_text(body, "Dealer Ad")
                     is_direct_seller = SGBikeMart.has_button_text(body, "Direct Seller")
 
-                    bike_ad = {
-                        "posted_date": date_posted,
-                        "title": ad_title,
-                        "url": ad_url,
-                        "reg_date": reg_date,
-                        "capacity": capacity,
-                        "bike_type": bike_type,
-                        "mileage": mileage,
-                        "price": price,
-                        "is_paid": is_paid,
-                        "is_dealer": is_dealer,
-                        "is_direct_seller": is_direct_seller,
-                    }
+                    bike_ad = VehicleAd(
+                        source="SGBikeMart",
+                        title=ad_title,
+                        url=ad_url,
+                        posted_date=date_posted,
+                        price=price,
+                        reg_date=reg_date,
+                        capacity=capacity,
+                        vehicle_type=bike_type,
+                        mileage=mileage,
+                        paid_ad=is_paid,
+                        dealer_ad=is_dealer,
+                        direct_seller_ad=is_direct_seller,
+                    )
                     results.append(bike_ad)
 
         print(f"Number of items: {len(results)}")
