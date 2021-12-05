@@ -1,4 +1,4 @@
-from sgbikemart import SGBikeMart
+from sgbikemart_crawler import SGBikeMart
 
 
 class SGBikeCrawler:
