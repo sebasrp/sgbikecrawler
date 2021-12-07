@@ -11,7 +11,9 @@ from vehicle_ad import VehicleAd
 
 class Carousell:
     BASE = "https://sg.carousell.com"
-    SEARCH = "https://sg.carousell.com/search/"
+    SEARCH = (
+        "https://www.carousell.sg/categories/motorcycles-108/motorcycles-for-sale-1592/"
+    )
 
     @staticmethod
     def retrieve_page(url):
@@ -56,11 +58,13 @@ class Carousell:
         print(f"retrieving listings from Carousell")
         results = []
         search_params = {
+            "search": bike_model,
             "condition_v2": "USED",
             "price_start": price_min,
             "price_end": price_max,
+            "sort_by": 3,  # most recent first (until we figure out how to load all results)
         }
-        page_url = f"{Carousell.SEARCH}{urllib.parse.quote(bike_model)}?{urllib.parse.urlencode(search_params)}"
+        page_url = f"{Carousell.SEARCH}?{urllib.parse.urlencode(search_params)}"
 
         print(f"crawling page: {page_url}")
         search_results = Carousell.retrieve_page(page_url)
