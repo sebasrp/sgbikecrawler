@@ -20,6 +20,10 @@ def main(model, terminal, csv):
 
 
 def generate_csv(bikes_list):
+    if len(bikes_list) <= 0:
+        print(f"bike listings empty... skipping")
+        return
+
     keys = bikes_list[0].keys()
     with open("bike_ads.csv", "w", newline="") as output_file:
         dict_writer = csv.DictWriter(output_file, keys)

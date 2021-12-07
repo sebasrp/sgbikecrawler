@@ -80,6 +80,7 @@ class SGBikeMart:
 
     @staticmethod
     def retrieve_all_listings(bike_model):
+        print(f"Retrieving listings from sgbikemart")
         results = []
 
         page_url = (
