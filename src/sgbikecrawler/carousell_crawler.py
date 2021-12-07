@@ -52,10 +52,16 @@ class Carousell:
         return coe_expiry_year, coe_expiry_details
 
     @staticmethod
-    def retrieve_all_listings(bike_model):
+    def retrieve_all_listings(bike_model, price_min="", price_max=""):
         print(f"retrieving listings from Carousell")
         results = []
-        page_url = f"{Carousell.SEARCH}{urllib.parse.quote(bike_model)}?{urllib.parse.urlencode({'condition_v2':'USED'})}"
+        search_params = {
+            "condition_v2": "USED",
+            "price_start": price_min,
+            "price_end": price_max,
+        }
+        page_url = f"{Carousell.SEARCH}{urllib.parse.quote(bike_model)}?{urllib.parse.urlencode(search_params)}"
+
         print(f"crawling page: {page_url}")
         search_results = Carousell.retrieve_page(page_url)
         bike_listings = search_results.find_all(

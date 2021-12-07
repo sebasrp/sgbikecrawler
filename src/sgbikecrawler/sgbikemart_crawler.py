@@ -79,20 +79,24 @@ class SGBikeMart:
         return int(total_pages)
 
     @staticmethod
-    def retrieve_all_listings(bike_model):
+    def retrieve_all_listings(bike_model, price_min="", price_max=""):
         print(f"Retrieving listings from sgbikemart")
         results = []
 
-        page_url = (
-            f"{SGBikeMart.URL}?{urllib.parse.urlencode({'bike_model':bike_model})}"
-        )
+        search_params = {
+            "page": 1,
+            "bike_model": bike_model,
+            "price_from": price_min,
+            "price_to": price_max,
+        }
+        page_url = f"{SGBikeMart.URL}?{urllib.parse.urlencode(search_params)}"
         init_page = SGBikeMart.retrieve_page(page_url)
         total_pages = SGBikeMart.retrieve_total_pages(init_page)
         print(f"Search result has {total_pages} pages... let's get started!")
 
         for page_number in range(1, total_pages + 1):
-            url_vars = {"page": page_number, "bike_model": bike_model}
-            page_url = f"{SGBikeMart.URL}?{urllib.parse.urlencode(url_vars)}"
+            search_params["page"] = page_number
+            page_url = f"{SGBikeMart.URL}?{urllib.parse.urlencode(search_params)}"
             retrieved_page = SGBikeMart.retrieve_page(page_url)
             print(f"crawling page {page_number}, url: {page_url}")
 
