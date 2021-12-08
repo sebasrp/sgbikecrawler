@@ -15,7 +15,7 @@ pyenv virtualenv 3.8.3 venv-sgbikecrawler
 1. Activate your virtual environment
 
 ```bash
-pyenv local venv-sgbikecrawler && pyenv activate venv-sgbikecrawler
+pyenv activate venv-sgbikecrawler
 ```
 
 1. Install dependencies
