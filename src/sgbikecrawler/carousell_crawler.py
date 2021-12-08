@@ -5,6 +5,7 @@ from decimal import Decimal
 from bs4 import BeautifulSoup
 import requests
 from tqdm import tqdm
+import dateparser
 
 from vehicle_ad import VehicleAd
 
@@ -33,15 +34,30 @@ class Carousell:
 
     @staticmethod
     def retrieve_description_fields(soup):
-        bumped = bike_type = text = ""
+        posted = bike_type = text = ""
+        is_paid = False
         # we first locate the description header
         description_div_children = soup.find(
             "p", text=re.compile("Description")
         ).parent.findAll("div", recursive=False)
 
         header_div = description_div_children[0]
+        bumped_div = header_div.find("p", text=re.compile("Bumped"))
+        if bumped_div is not None:
+            posted_dt = dateparser.parse(bumped_div.find_next_sibling("p").text)
+            posted = posted_dt.strftime("%Y/%m/%d")
+            is_paid = True
+        else:
+            posted_div = header_div.find("p", text=re.compile("Posted"))
+            if posted_div is not None:
+                posted_dt = dateparser.parse(posted_div.find_next_sibling("p").text)
+                posted = posted_dt.strftime("%Y/%m/%d")
+        bike_type_div = header_div.find("p", text=re.compile("Type"))
+        if bike_type_div is not None:
+            bike_type = bike_type_div.find_next_sibling("p").text
+        print(f"posted: {posted}, bike type: {bike_type}, is_paid: {is_paid}")
         text = description_div_children[1].text
-        return bumped, bike_type, text
+        return posted, bike_type, text, is_paid
 
     @staticmethod
     def retrieve_listing_coe(listing_text):
@@ -84,9 +100,12 @@ class Carousell:
 
             # we now need to retrieve the remaining data from the listing page
             listing_page = Carousell.retrieve_page(url)
-            bumped, bike_type, listing_text = Carousell.retrieve_description_fields(
-                listing_page
-            )
+            (
+                posted,
+                bike_type,
+                listing_text,
+                is_paid,
+            ) = Carousell.retrieve_description_fields(listing_page)
             coe_expiry_year, coe_expiry_details = Carousell.retrieve_listing_coe(
                 listing_text
             )
@@ -98,6 +117,9 @@ class Carousell:
                 price=price_string,
                 coe_expiry_year=coe_expiry_year,
                 coe_expiry_details=coe_expiry_details,
+                posted_date=posted,
+                vehicle_type=bike_type,
+                paid_ad=is_paid,
             )
             results.append(bike_ad)
 
