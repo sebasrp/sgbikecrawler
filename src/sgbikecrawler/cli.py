@@ -7,7 +7,9 @@ from sgbikecrawler import SGBikeCrawler
 
 @click.command()
 @click.option("--csv", is_flag=True, help="Outputs results to csv")
-@click.option("--terminal", is_flag=True, help="Outputs results to terminal")
+@click.option(
+    "--terminal", is_flag=True, help="Outputs results to terminal", default=True
+)
 @click.option("--max", "max_", help="Maximum price of the listing", default="")
 @click.option("--min", "min_", help="Minimum price of the listing", default="")
 @click.option("-m", "--model", help="The bike model you are interested in")

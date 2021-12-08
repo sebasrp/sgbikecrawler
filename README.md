@@ -36,3 +36,8 @@ For example, to search for a specific bike model:
 ```bash
  python3 src/sgbikecrawler/cli.py --model="KTM Duke 200"
 ```
+
+To output results to csv:
+```bash
+ python3 src/sgbikecrawler/cli.py --model="KTM Duke 200" --csv
+```
