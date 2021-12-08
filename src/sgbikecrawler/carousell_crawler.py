@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import requests
 from tqdm import tqdm
 import dateparser
+from dateparser.search import search_dates
 
 from vehicle_ad import VehicleAd
 
@@ -46,18 +47,23 @@ class Carousell:
         header_div = description_div_children[0]
         bumped_div = header_div.find("p", text=re.compile("Bumped"))
         if bumped_div is not None:
-            posted_dt = dateparser.parse(bumped_div.find_next_sibling("p").text)
+            posted_dt = dateparser.parse(
+                bumped_div.find_next_sibling("p").text,
+                settings={"PREFER_DAY_OF_MONTH": "first"},
+            )
             posted = posted_dt.strftime("%Y/%m/%d")
             is_paid = True
         else:
             posted_div = header_div.find("p", text=re.compile("Posted"))
             if posted_div is not None:
-                posted_dt = dateparser.parse(posted_div.find_next_sibling("p").text)
+                posted_dt = dateparser.parse(
+                    posted_div.find_next_sibling("p").text,
+                    settings={"PREFER_DAY_OF_MONTH": "first"},
+                )
                 posted = posted_dt.strftime("%Y/%m/%d")
         bike_type_div = header_div.find("p", text=re.compile("Type"))
         if bike_type_div is not None:
             bike_type = bike_type_div.find_next_sibling("p").text
-        print(f"posted: {posted}, bike type: {bike_type}, is_paid: {is_paid}")
         text = description_div_children[1].text
         return posted, bike_type, text, is_paid
 
@@ -69,6 +75,12 @@ class Carousell:
         if COE_expiry_search is not None:
             coe_expiry_year = COE_expiry_search.group(1).strip()
             coe_expiry_details = COE_expiry_search.group(0).strip()
+
+            coe_dates = search_dates(
+                coe_expiry_details, settings={"PREFER_DAY_OF_MONTH": "first"}
+            )
+            if len(coe_dates) > 0:
+                coe_expiry_year = coe_dates[0][1].strftime("%Y/%m/%d")
         return coe_expiry_year, coe_expiry_details
 
     @staticmethod
