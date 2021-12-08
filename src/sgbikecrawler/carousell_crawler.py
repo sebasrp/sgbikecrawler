@@ -29,7 +29,9 @@ class Carousell:
         for item in p_list:
             price_group = re.search(r"S\$[0-9,]*", item.text)
             if price_group is not None:
-                price = Decimal(re.sub(r"[^\d\-.]", "", price_group.group(0).strip()))
+                price = str(
+                    Decimal(re.sub(r"[^\d\-.]", "", price_group.group(0).strip()))
+                )
         return price
 
     @staticmethod
