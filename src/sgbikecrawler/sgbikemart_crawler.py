@@ -22,6 +22,7 @@ class SGBikeMart:
             "Accept-Language": "en-US,en;q=0.8",
             "Connection": "keep-alive",
         }
+        print(f"retrieving page: {url}")
         req = requests.get(url, headers=headers)
         soup = BeautifulSoup(req.text, "html.parser")
         return soup
@@ -80,12 +81,12 @@ class SGBikeMart:
 
     @staticmethod
     def retrieve_all_listings(bike_model, price_min="", price_max=""):
-        print(f"Retrieving listings from sgbikemart")
+        print("Retrieving listings from sgbikemart")
         results = []
 
         search_params = {
-            "page": 1,
             "bike_model": bike_model,
+            "page": 1,
             "price_from": price_min,
             "price_to": price_max,
         }
@@ -98,7 +99,6 @@ class SGBikeMart:
             search_params["page"] = page_number
             page_url = f"{SGBikeMart.URL}?{urllib.parse.urlencode(search_params)}"
             retrieved_page = SGBikeMart.retrieve_page(page_url)
-            print(f"crawling page {page_number}, url: {page_url}")
 
             all_bikes = retrieved_page.select("div.row > div.col-lg-9 > div.card")
 

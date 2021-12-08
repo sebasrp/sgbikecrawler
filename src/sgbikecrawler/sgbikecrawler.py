@@ -4,7 +4,7 @@ from carousell_crawler import Carousell
 
 class SGBikeCrawler:
     @staticmethod
-    def retrieve_all_listings(bike_model, price_min=0, price_max=None):
+    def retrieve_all_listings(bike_model, price_min="", price_max=""):
         bike_ads = []
         bike_ads += SGBikeMart.retrieve_all_listings(
             bike_model=bike_model, price_min=price_min, price_max=price_max

@@ -25,8 +25,14 @@ pip install -r requirements.txt
 ```
 
 ## Running the script
-Just execute the command line as follow:
+Just execute the command line as follow to see how to use:
 
 ```bash
-python src/sgbikecrawler/sgbike_crawler.py
+python src/sgbikecrawler/cli.py --help
+```
+
+For example, to search for a specific bike model:
+
+```bash
+ python3 src/sgbikecrawler/cli.py --model="KTM Duke 200"
 ```
