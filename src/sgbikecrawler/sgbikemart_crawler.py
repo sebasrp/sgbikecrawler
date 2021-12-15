@@ -121,7 +121,7 @@ class SGBikeMart:
                     coe_datetime = reg_date_datetime.replace(
                         year=reg_date_datetime.year + 10
                     )
-                    coe_expiry_year = coe_datetime.year
+                    coe_expiry_year = coe_datetime.strftime("%Y/%m/%d")
                     coe_expiry_details = coe_datetime.strftime("%Y/%m/%d")
                     capacity = SGBikeMart.retrieve_body_section(body, "Capacity")
                     bike_type = SGBikeMart.retrieve_body_section(body, "Vehicle Type")
