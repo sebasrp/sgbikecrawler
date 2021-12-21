@@ -16,7 +16,6 @@ class CarousellAPI:
     SEARCH = "https://www.carousell.sg/api-service/search/cf/4.0/search/"
     DETAIL = "https://www.carousell.sg/api-service/listing/3.1/listings/"
 
-
     @staticmethod
     def retrieve_listing_coe(listing_text):
         coe_expiry_year = ""
@@ -44,18 +43,15 @@ class CarousellAPI:
             "count": 40,
             "countryCode": "SG",
             "countryId": "1880251",
-            "filters":[
+            "filters": [
                 {
                     "fieldName": "price",
                     "rangedFloat": {
-                        "end":{"value": price_max},
-                        "start":{"value": price_min}
-                    }
+                        "end": {"value": price_max},
+                        "start": {"value": price_min},
+                    },
                 },
-                {
-                    "fieldName": "condition_v2",
-                    "idsOrKeywords":{"value":["USED"]}
-                },
+                {"fieldName": "condition_v2", "idsOrKeywords": {"value": ["USED"]}},
             ],
             "includeSuggestions": True,
             "locale": "en",
@@ -63,48 +59,55 @@ class CarousellAPI:
                 "prefill_condition_v2": "USED",
                 "prefill_price_end": price_max,
                 "prefill_price_start": price_min,
-                "prefill_sort_by":"3"
+                "prefill_sort_by": "3",
             },
             "query": bike_model,
-            "sortParam":{"fieldName": "3"}
+            "sortParam": {"fieldName": "3"},
         }
         response_data = []
         try:
             r = requests.post(CarousellAPI.SEARCH, data=search_params)
-            response_data = r.json()['data']['results']
+            response_data = r.json()["data"]["results"]
         except Exception:
             print(traceback.format_exc())
 
-        #print(f"response_data: {json.dumps(response_data)}")
+        # print(f"response_data: {json.dumps(response_data)}")
 
         for listing in tqdm(response_data):
             if "listingCard" in listing.keys():
                 listing_data = listing["listingCard"]
 
                 title = listing_data["title"]
-                listing_id = listing_data['id']
+                listing_id = listing_data["id"]
                 url = f"{CarousellAPI.BASE}/p/{listing_id}"
 
                 try:
-                    r_listing = requests.post(f"{CarousellAPI.DETAIL}/{listing_id}/detail")
-                    listing_data = r_listing.json()['data']['screens'][0]['meta']['default_value']
-                    listing_headers = r_listing.json()['data']['screens'][0]['groups']
+                    r_listing = requests.post(
+                        f"{CarousellAPI.DETAIL}/{listing_id}/detail"
+                    )
+                    listing_data = r_listing.json()["data"]["screens"][0]["meta"][
+                        "default_value"
+                    ]
+                    listing_headers = r_listing.json()["data"]["screens"][0]["groups"]
                     print(f"listing_data: {json.dumps(listing_data)}")
 
-                    price = listing_data['price']
-                    if Decimal(price) < int(price_min) or Decimal(price) > int(price_max):
+                    price = listing_data["price"]
+                    if Decimal(price) < int(price_min) or Decimal(price) > int(
+                        price_max
+                    ):
                         continue
 
                     posted_dt = dateparser.parse(
-                        listing_data['time_created'],
+                        listing_data["time_created"],
                         settings={"PREFER_DAY_OF_MONTH": "first"},
                     )
                     posted_date = posted_dt.strftime("%Y/%m/%d")
                     bike_type = ""
-                    description_text = listing_data['description']
-                    coe_expiry_year, coe_expiry_details = CarousellAPI.retrieve_listing_coe(
-                        description_text
-                    )
+                    description_text = listing_data["description"]
+                    (
+                        coe_expiry_year,
+                        coe_expiry_details,
+                    ) = CarousellAPI.retrieve_listing_coe(description_text)
 
                     bike_ad = VehicleAd(
                         source="Carousell",
@@ -114,7 +117,6 @@ class CarousellAPI:
                         coe_expiry_details=coe_expiry_details,
                         price=price,
                         posted_date=posted_date,
-
                     )
                     results.append(bike_ad)
                 except Exception:
