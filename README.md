@@ -41,3 +41,8 @@ To output results to csv:
 ```bash
  python3 src/sgbikecrawler/cli.py --model="KTM Duke 200" --csv
 ```
+
+You can also put a filter in prices
+```bash
+ python3 src/sgbikecrawler/cli.py --model="KTM Duke 200" --min=7000 --max=9000 --csv
+```
