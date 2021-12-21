@@ -8,14 +8,14 @@ from sgbikecrawler import SGBikeCrawler
 @click.command()
 @click.option("--csv", is_flag=True, help="Outputs results to csv")
 @click.option(
-    "--terminal", is_flag=True, help="Outputs results to terminal", default=True
+    "--terminal", is_flag=True, help="Outputs results to terminal", default=False
 )
 @click.option("--max", "max_", help="Maximum price of the listing", default="")
 @click.option("--min", "min_", help="Minimum price of the listing", default="")
 @click.option("-m", "--model", help="The bike model you are interested in")
 def main(model, min_, max_, terminal, csv):
     bikes_list = SGBikeCrawler.retrieve_all_listings(
-        bike_model="KTM 200", price_min=min_, price_max=max_
+        bike_model=model, price_min=min_, price_max=max_
     )
 
     if csv:
