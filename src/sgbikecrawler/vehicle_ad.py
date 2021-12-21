@@ -1,3 +1,7 @@
+import datetime
+import dateparser
+
+
 class VehicleAd(object):
     def __init__(
         self,
@@ -30,6 +34,18 @@ class VehicleAd(object):
         self.dealer_ad = dealer_ad
         self.direct_seller_ad = direct_seller_ad
 
+    def get_depreciation_year(self):
+        if self.coe_expiry_year is None or self.coe_expiry_year == "":
+            return None
+
+        today = datetime.datetime.today()
+        coe_end = dateparser.parse(self.coe_expiry_year)
+        diff = coe_end - today
+        difference_in_years = diff.days / 365.0
+        if difference_in_years <= 0:
+            return None
+        return int(int(self.price) / difference_in_years)
+
     def to_dict(self):
         return {
             "source": self.source,
@@ -45,4 +61,5 @@ class VehicleAd(object):
             "paid_ad": self.paid_ad,
             "dealer_ad": self.dealer_ad,
             "direct_seller_ad": self.direct_seller_ad,
+            "depreciation_year": self.get_depreciation_year(),
         }

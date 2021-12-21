@@ -6,4 +6,5 @@ isort
 beautifulsoup4
 tqdm
 dateparser
+python-dateutil
 -e .
