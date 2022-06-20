@@ -37,8 +37,12 @@ class Carousell:
 
     @staticmethod
     def retrieve_description_fields(soup):
-        posted = bike_type = text = ""
+        posted = bike_type = title = text = ""
         is_paid = False
+
+        # we get the title:
+        title = soup.find("p", {"data-testid": "new-listing-details-page-desktop-text-title"}).getText()
+
         # we first locate the description header
         description_div_children = soup.find(
             "p", text=re.compile("Description")
@@ -65,7 +69,7 @@ class Carousell:
         if bike_type_div is not None:
             bike_type = bike_type_div.find_next_sibling("p").text
         text = description_div_children[1].text
-        return posted, bike_type, text, is_paid
+        return posted, bike_type, title, text, is_paid
 
     @staticmethod
     def retrieve_listing_coe(listing_text):
@@ -105,9 +109,6 @@ class Carousell:
 
         for card in tqdm(bike_listings):
             info = card.find("a", {"href": re.compile("^\/p\/")})
-            title = info.find("img", {"src": re.compile("\S*_thumbnail\S*")}).get(
-                "title"
-            )  # title text of img has same text as ad title
             price_string = Carousell.retrieve_price(info)
             href = info.get("href")
             url = Carousell.BASE + href
@@ -117,6 +118,7 @@ class Carousell:
             (
                 posted,
                 bike_type,
+                title,
                 listing_text,
                 is_paid,
             ) = Carousell.retrieve_description_fields(listing_page)
