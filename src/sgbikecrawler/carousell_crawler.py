@@ -41,7 +41,9 @@ class Carousell:
         is_paid = False
 
         # we get the title:
-        title = soup.find("p", {"data-testid": "new-listing-details-page-desktop-text-title"}).getText()
+        title = soup.find(
+            "p", {"data-testid": "new-listing-details-page-desktop-text-title"}
+        ).getText()
 
         # we first locate the description header
         description_div_children = soup.find(
@@ -83,7 +85,7 @@ class Carousell:
             coe_dates = search_dates(
                 coe_expiry_details, settings={"PREFER_DAY_OF_MONTH": "first"}
             )
-            if len(coe_dates) > 0:
+            if coe_dates is not None and len(coe_dates) > 0:
                 coe_expiry_year = coe_dates[0][1].strftime("%Y/%m/%d")
         return coe_expiry_year, coe_expiry_details
 
