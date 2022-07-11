@@ -5,10 +5,17 @@ from decimal import Decimal
 from bs4 import BeautifulSoup
 import requests
 from tqdm import tqdm
+import warnings
 import dateparser
 from dateparser.search import search_dates
 
 from vehicle_ad import VehicleAd
+
+# Ignore dateparser warnings regarding pytz
+warnings.filterwarnings(
+    "ignore",
+    message="The localize method is no longer necessary, as this time zone supports the fold attribute",
+)
 
 
 class Carousell:
