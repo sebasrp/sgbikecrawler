@@ -31,7 +31,7 @@ def generate_csv(bikes_list):
         return
 
     keys = bikes_list[0].keys()
-    with open("bike_ads.csv", "w", newline="") as output_file:
+    with open("bike_ads.csv", "w", newline="", encoding="utf-8") as output_file:
         dict_writer = csv.DictWriter(output_file, keys)
         dict_writer.writeheader()
         dict_writer.writerows(bikes_list)
